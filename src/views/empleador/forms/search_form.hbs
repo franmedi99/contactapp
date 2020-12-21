@@ -1,0 +1,88 @@
+<div class="container">
+    <div class="container mx-auto bg-primary mt-4">
+<div class="container p-2">
+
+<div class="input-group mb-3 ">
+  <input type="text" class="form-control text-light blanco text-center mx-auto" placeholder="Buscar Nuevo Empleado"  id="empleo" name="empleo" >
+  <div class="input-group-append ">
+       <button class="nobackground text-light mt-4" id="enviar" type="submit"><i class="fa fa-search  fa-2x" aria-hidden="true"></i></button>
+  </div>
+</div>
+
+</div>
+ 
+
+
+   
+
+</div>
+</div>
+
+  <div id="resp"></div>
+<script>
+
+const enviar = document.querySelector('#enviar');
+
+
+
+    enviar.addEventListener('click',()=>{
+    event.preventDefault()
+        //validar campo
+    const empleo = document.querySelector('#empleo').value;
+    if(empleo.trim() === '') return false;
+    
+        //mandar solicitud
+  fetch('/company/search',{
+      method: 'POST',
+      headers:{'Content-type':'application/json'},
+      body: JSON.stringify({empleo:empleo})
+      })
+      .then(res => res.json())
+      .then(data =>{
+
+          
+            const resultados = document.querySelector('#resp');
+            let html = '';
+              data.results.forEach(result =>{
+                html += `
+            <div class="mt-3 mb-3"  >
+              <div class="row justify-content-center mx-auto col-md-8 align-items-center ">
+                <div class="card border-primary col-md-12 mx-auto text-center offset-md-1">
+                   <div class="card-header bg-muted border text-primary" ><h4>${result.nombre} ${result.apellido}</h3></div>
+                  <div class="card-body">
+                    <div class="text-left"><h4>${result.trabajo}</h4></div>
+                   <div class="col-md-11 form-row  ">
+                        <h6 class="text-left">${result.descripcion}</h6>
+  </div> 
+                     <div class="col-md-11 form-row  ">
+                       <label>Horario laboral</label>
+                        <h6 class="text-left">${result.horario}</h6>
+  </div> 
+                                          <div class="col-12">
+                                                                       <div class="input-group  ">
+                                     <a href=" /employee/public/${result.id_remitente}" class="btn btn-primary mx-auto text-center" type="submit">Ver Perfil</a>
+                                   <div class="input-group-append mr-auto ">
+                                    <form action="/employee/new-notification/${result.id_remitente}" method="post"
+                                        onsubmit="return confirm('Desea Enviar una Solicitud de trabajo a ${result.nombre} ${result.apellido}?');">
+                                              <input type="hidden" name="trabajo" value="${result.trabajo}">
+                                        <button type="submit" class="btn btn-success ">Enviar Solicitud</button>
+                                    </form>
+                                    </div>
+                                      </div>
+
+
+                                </div>
+                
+                  </div>
+                </div>
+              </div>
+            </div>    
+            `})
+          resultados.innerHTML = html;
+      })
+    })
+
+
+
+
+</script>

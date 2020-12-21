@@ -1,0 +1,150 @@
+<style>
+.my-pre{
+    margin: 0;
+    font-family: Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    font-size: .8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #444;
+    text-align: left;
+        --font-family-sans-serif: Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+</style> 
+ 
+ 
+ 
+ <div class="mt-3 mb-3"   >
+              <div class="row justify-content-center mx-auto col-md-10 align-items-center ">
+                <div class="card border-primary col-md-12 mx-auto text-center offset-md-1">
+                   <div class="card-header bg-muted border text-primary" ><h4>{{user.nombre}} {{user.apellido}}</h3></div>
+                  <div class="card-body">
+                            <div class="mx-auto text-center">
+                          
+                              
+                                      <div class="form-row col-8 mx-auto">
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+                          
+                    <h3>Edad: {{user.fecha}}</h3>
+            </div>
+
+          </div>
+          
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+               <h3 class="input-group">Puntuacion:  {{#if puntuacion}} <div class="ml-1 input-group-append"> <h3 class="text-info"> {{puntuacion.puntuacion}}</h3><p class="text-warning"> <i class="fa fa-star ml-1" aria-hidden="true"></i>    </p> </div> {{else}} <p class="text-primary input-group-append">Sin Puntuar</p> {{/if}}</h3>
+            </div>
+          </div>
+        </div>
+
+                               </div>
+
+<hr>
+                            <div class="mx-auto text-center">
+                                <label>Informacion de contacto</label>
+                              
+                                      <div class="form-row col-8 mx-auto">
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+                          <label>Email</label>
+                    <h5>{{user.email}}</h5>
+            </div>
+
+          </div>
+          
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+                          <label>Telefono</label>
+              <h5>{{user.telefono}}</h5>
+            </div>
+          </div>
+        </div>
+
+                               </div>
+
+ <hr>
+                                                        <div class="mx-auto text-center">
+                                <label>Informacion Adicional</label>
+                              
+                                      <div class="form-row col-8 mx-auto">
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+                          <label>Genero</label>
+                    <h5>{{user.sexo}}</h5>
+            </div>
+
+          </div>
+         
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+                          <label>Estado Civil</label>
+              <h5>{{user.estado_civil}}</h5>
+            </div>
+          </div>
+        </div>
+
+                               </div>
+
+<hr>
+                           
+                              <div class="mx-auto"> <h3>Referencias</h3></div> 
+                       <div class="text-left ml-5"> <pre class="my-pre">{{user.descripcion}}</pre></div>
+
+
+
+<hr>
+
+{{#if puntuacion}}
+<script
+  src="https://www.mercadopago.com.mx/integrations/v1/web-payment-checkout.js"
+  data-preference-id='<%= global.id %>'>
+</script>
+
+
+{{/if}}
+
+
+
+
+<h4 class="mx-auto text-center"> {{user.nombre}} busca trabajo como</h4>
+<div class="card-group">
+
+    
+ {{#each oferta as |oferta|}}
+ <div class="col-12 mb-3">
+  <div class="card border-success">
+<div class="card-header"><h5 class="card-title">{{oferta.trabajo}}</h5></div>
+    <div class="card-body">
+      
+      <p class="card-text">{{oferta.descripcion}}</p>
+
+
+ <form action="/employee/new-notification/{{oferta.id_remitente}}" method="post"
+                                        onsubmit="return confirm('Desea Enviar una Solicitud de trabajo?');">
+                                              <input type="hidden" name="trabajo" value="{{oferta.trabajo}}">
+                                        <button type="submit" class="btn btn-primary ">Enviar Propuesta de Trabajo</button>
+                                    </form>
+    </div>
+  </div>
+
+
+
+</div>
+{{/each}}
+
+
+
+</div>
+
+
+
+
+
+
+                
+                  </div>
+                </div>
+              </div>
+            </div> 
+

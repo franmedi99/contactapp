@@ -1,0 +1,31 @@
+<div class="col-md-6 mx-auto text-center mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h3>Editar postulación </h3>
+        </div>
+        <div class="card-body">
+            <form action="/employee/post/{{post.id_post}}" method="POST">
+              
+
+
+                <div class="form-group">
+                 <label for="fecha">Trabajo</label>
+                 <input type="text" name="trabajo" value="{{post.trabajo}}" class="form-control" placeholder="Trabajo" required>
+                  </div>
+
+
+                <div class="form-group">
+                <label for="productos">Descripcion</label>
+                <textarea name="descripcion" class="form-control" placeholder="Lista de Productos" rows="5" required>{{post.descripcion}}</textarea>
+                </div>
+
+              
+
+
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" type="submit">Editar postulación </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

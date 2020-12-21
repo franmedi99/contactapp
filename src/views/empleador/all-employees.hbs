@@ -1,0 +1,51 @@
+{{#if employees}}
+
+<div class="container col-10 mx-auto">
+  <table class="table col-11 mx-auto mt-3">
+    <thead class="bg-primary text-light">
+      <tr>
+        <th scope="col" class="text-center">Empleado</th>
+        <th scope="col" class="text-center">Empleo</th>
+        <th scope="col" class="text-center">Accion</th>
+        {{!-- <th scope="col">Cocheras</th> --}}
+       
+      </tr>
+
+
+    </thead>
+    <tbody>
+
+      {{#each employees}}
+      <tr>
+        <th scope="row" class="text-center">{{nombre}} {{apellido}}</th>
+        <th scope="row" class="text-center">{{trabajo}}</th>
+
+        <th scope="row" class="text-center">                                    
+
+            <a  href="/company/dismiss/{{id}}/{{id_receptor}}/{{trabajo}}" class="btn btn-outline-warning btn-block mt-3 mr-3">Despedir <i class="fa fa-times" aria-hidden="true"></i></button>
+
+          </th>
+      </tr>
+      {{/each}}
+
+    </tbody>
+  </table>
+</div>
+
+  
+{{else}}
+<div class="container mt-5">
+  
+<h2 class="text-center">Todavía no tienes ningun empleado</h2>
+</div>
+{{/if}}
+
+
+
+
+
+
+
+
+
+

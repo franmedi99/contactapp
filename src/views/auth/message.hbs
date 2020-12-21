@@ -1,0 +1,26 @@
+
+<div class="container mt-3 ">
+    <div class="jumbotron">
+  <h1 class="display-4 text-center">Verificacion de correo electrónico</h1>
+  <p class="lead">Para terminar con su registro, se envio a su correo electronico una direccion donde podra activar su cuenta.</p>
+  <hr class="my-4">
+  <strong class="text-center">ATENCION!!</strong>
+  <p>El email se ha enviado satisfactoriamente, si en su bandeja principal no lo encuentra, se recomienda:</p>
+      <p>que en el caso de usar outlook se vaya a la seccion de correos no deseados </p>
+    <p>En caso de que use gmail diríjase a la parte seccion de spam, ahi se podra encontrar con nuestro correo de verificacion de email</p>
+    
+  
+
+    <hr class="my-4">
+
+    <h1 class="display-8 text-center">No llego el email?</h1>
+
+<form action="/resend" method="post">
+<input type="hidden" name="email" value="{{user.email}}">
+<button type="submit" class="btn btn-primary btn-block">Reenviar Email</button>
+
+</form>
+
+</div>
+
+</div>

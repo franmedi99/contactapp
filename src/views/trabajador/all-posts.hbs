@@ -1,0 +1,57 @@
+{{#if posts}}
+
+
+
+ {{#each posts as |post|}}
+<div  style="  margin-top:1%;" >
+
+<div class="row justify-content-center mx-auto col-md-10 align-items-center ">
+<div class="card border-primary col-md-8 mx-auto text-center offset-md-1">
+ <div class="card-header"><h3>{{post.trabajo}}</h3></div>
+  <div class="card-body">
+     
+    <div class="col-md-8 form-row mx-auto ">
+  
+   <h5 class="text-center">{{post.descripcion}}</h5>
+</div>
+    <hr>
+    
+<div class="form-row mx-auto">
+       <div class="ml-auto justify-content-center mb-1" style="margin-left: 3rem !import;">
+            <a href="/employee/post/{{post.id_post}}" class="btn btn-primary btn-block">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <h6>Editar post</h6>
+            </a>
+        </div>
+         <div class="p-1"></div>
+         <div class="mr-auto justify-content-center mb-1">
+            <a href="/employee/delete/{{post.id_post}}" class="btn btn-danger btn-block">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                <h6>Eliminar </h6>
+            </a>
+        </div>
+
+</div>
+     <!--div que cierra el contenedor principal-->
+
+
+  </div>
+</div>
+
+</div>
+
+
+
+
+
+  </div>
+       
+{{/each}}
+
+  
+{{else}}
+<div class="container mt-5">
+  
+<h2 class="text-center">Todavia no tienes ningun post <a href="/employee/new-post">Click aqui para crear uno!!</a></h2>
+</div>
+{{/if}}

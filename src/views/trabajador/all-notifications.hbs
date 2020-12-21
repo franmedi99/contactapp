@@ -1,0 +1,65 @@
+{{#if notificaciones}}
+
+<div  style="  margin-top:1%;" >
+
+<div class="row justify-content-center mx-auto col-md-10 align-items-center ">
+<div class="card border-primary col-md-12 mx-auto text-center offset-md-1">
+  <div class="card-header">Solicitudes de Trabajo</div>
+  <div class="card-body">
+     
+
+ {{#each notificaciones as |notificacion|}}
+
+<div class="border mt-3 mb-3 p-1 mx-auto">
+<div class="input-group mb-3">
+
+
+    <div class=" form-row mx-auto "><h5 class="text-center mt-4"><a href="/company/public/{{notificacion.id_remitente}}">{{notificacion.nombre}}</a>   Te ha enviado una solicitud de trabajo (trabajo: {{notificacion.contenido}})</h5></div>
+      
+      <div class="input-group-append">
+
+  
+                                
+                                     <form action="/employee/new-employee/{{notificacion.id_remitente}}" method="post" onsubmit="return confirm('Desea Aceptar a este empleado?');">
+                                        <input type="hidden" name="respuesta" value="accept">
+                                        <input type="hidden" name="trabajo" value="{{notificacion.contenido}}">
+                                      <button type="submit" class="btn btn-outline-success mr-1 mt-3">Aceptar <i class="fa fa-check" aria-hidden="true"></i></button>
+                                    </form>
+                              
+                                  
+                                    <form action="/employee/new-employee/{{notificacion.id_remitente}}" method="post" onsubmit="return confirm('Desea Rechazar a este empleado?');">
+                                        <input type="hidden" name="respuesta" value="deny">
+                                      <button type="submit" class="btn btn-outline-danger mt-3 mr-3">Rechazar <i class="fa fa-times" aria-hidden="true"></i></button>
+                                    </form>
+
+
+
+
+
+    </div>
+</div>
+
+</div>
+{{/each}}
+
+
+  </div>   <!--div que cierra el card Body-->
+</div>
+
+</div>
+
+
+
+
+
+  </div>   <!--div que cierra el contenedor principal-->
+       
+
+
+  
+{{else}}
+<div class="container mt-5">
+  
+<h2 class="text-center">Todavía no tienes ninguna Notificación/Solicitud de Trabajo</h2>
+</div>
+{{/if}}
