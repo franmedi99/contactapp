@@ -1,0 +1,19 @@
+<div class="mt-3"></div>
+{{#each datos as |datos|}}
+ <div class="col-10 mb-3 mx-auto">
+  <div class="card border-success">
+<div class="card-header"><h5 class="card-title text-center">{{datos.nombre}}</h5></div>
+    <div class="card-body">
+      
+      <p class="card-text text-center">{{datos.review}}</p>
+
+
+       <div class="ml-4 input-group-append "> <h3 class="text-info"> {{datos.puntuacion}}</h3><p class="text-warning"> <i class="fa fa-star  fa-2x" aria-hidden="true"></i>    </p> </div>
+
+    </div>
+  </div>
+
+
+
+</div>
+{{/each}}

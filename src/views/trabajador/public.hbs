@@ -17,7 +17,7 @@
  <div class="mt-3 mb-3"   >
               <div class="row justify-content-center mx-auto col-md-10 align-items-center ">
                 <div class="card border-primary col-md-12 mx-auto text-center offset-md-1">
-                   <div class="card-header bg-muted border text-primary" ><h4>{{user.nombre}} {{user.apellido}}</h3></div>
+                   <div class="card-header bg-muted border text-primary" ><h4>{{user.nombre}} {{user.apellido}} {{global.id}}</h3></div>
                   <div class="card-body">
                             <div class="mx-auto text-center">
                           
@@ -96,16 +96,18 @@
 <hr>
 
 {{#if puntuacion}}
-<script
-  src="https://www.mercadopago.com.mx/integrations/v1/web-payment-checkout.js"
-  data-preference-id='<%= global.id %>'>
-</script>
+<form action="/company/mercadopago" method="post" target="_blank">
+    <input type="hidden" name="id" value="{{user.id}}">
+  <input type="submit" value="Ver Historial y reseñas" class="btn btn-primary col-4">
+</form>
+
+    
 
 
 {{/if}}
 
 
-
+<hr>
 
 <h4 class="mx-auto text-center"> {{user.nombre}} busca trabajo como</h4>
 <div class="card-group">

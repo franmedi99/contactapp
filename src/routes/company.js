@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
+const request = require('request');
+const https = require('https');
 moment.locale('es');
 
 const pool = require('../database');
 const { isLoggedIn, isCompany,isEmployee } = require('../lib/auth');
-
 
 
 //----------------------------INTENTO DE MERCADOPAGO-------------------------------
@@ -14,15 +15,139 @@ const mercadopago = require ('mercadopago');
 
 // Agrega credenciales
 mercadopago.configure({
-    access_token: 'PROD_ACCESS_TOKEN'
-  });
+  access_token: 'APP_USR-4799699007120477-122114-57f59901256952cb3879c03725469d62-584130093',
+});
+
+
+router.get('/suscription',isLoggedIn,isCompany, async(req,res)=>{
+    var sub = await pool.query('SELECT id_suscripcion FROM usuario_informacion WHERE id_informacion = ?', [req.user.id]);
+    var sub = JSON.parse(JSON.stringify(sub[0]))
+    var sub = sub.id_suscripcion
+    if(sub==="" || sub===undefined){
+        request.get({
+            "headers": { "Authorization": "Bearer APP_USR-7373336386837931-122318-7b0464d82f7f09257558d83eccf165bb-692207214"},
+            "url": "https://api.mercadopago.com/preapproval/search?status=authorized&payer_email="+req.user.email,
+    
+        }, async(error,response, body) => {
+            if(error) {
+                return res.send("error");
+            }
+            if(body){            
+            
+            var object = JSON.parse(body)
+           var object = object.results[0];
+           if(object===undefined || object===""){
+             
+              res.render('empleador/suscription/plans')
+          }else{
+              
+            const id_suscripcion = object.id
+            await pool.query('UPDATE usuario_informacion set id_suscripcion=? WHERE id_informacion = ?', [id_suscripcion,req.user.id]);
+            await res.redirect('/company/suscription')
+  
+          
+          }
+    
+            
+        
+        
+            }
+        });
+      
+        
+    }else{//en el caso de que haya un id de suscripcion
+
+        res.render('empleador/suscription/cancel');
+      
+    }
+    
+});
+
+router.post('/mercadopago',isLoggedIn,isCompany, async(req, res) => {
+    const {id} = req.body
+       
+   request.get({
+        "headers": { "Authorization": "Bearer APP_USR-7373336386837931-122318-7b0464d82f7f09257558d83eccf165bb-692207214"},
+        "url": "https://api.mercadopago.com/preapproval/search?status=authorized&payer_email="+req.user.email,
+
+    }, async(error,response, body) => {
+        if(error) {
+            return res.send("error");
+        }
+
+        if(body){            
+        
+        var object = JSON.parse(body)
+       var object = object.results[0];
+       if(object===undefined || object===""){
+           res.redirect("https://www.mercadopago.com/mla/debits/new?preapproval_plan_id=2c93808476adade80176af60847f048b")
+          
+      }else{
+           
+        const user = await pool.query('SELECT usuario_informacion.nombre, puntuacion.review,puntuacion.trabajo,puntuacion.puntuacion FROM usuario_informacion INNER JOIN puntuacion ON  usuario_informacion.id_informacion = puntuacion.id_remitente  WHERE puntuacion.id_receptor = ?', [id])
+
+        if(user===undefined || user==="" || user===null || user.length < 1){
+        
+            req.flash('message', 'Ha ocurrido un error inesperado, por favor vuelva a intentarlo');
+            res.redirect('/profile');
+        
+        }else{
+            const datos = JSON.parse(JSON.stringify(user))
+            console.log(datos)
+            res.render('empleador/historial',{datos});
+        }
+      
+      }
+
+        
+    
+    
+        }
+    });
+  
+});
 
 
 
+router.post('/cancel-suscription',isLoggedIn,isCompany, async(req, res) => {
+    var sub = await pool.query('SELECT id_suscripcion FROM usuario_informacion WHERE id_informacion = ?', [req.user.id]);
+    var sub = JSON.parse(JSON.stringify(sub[0]))
+    var sub = sub.id_suscripcion
+    request.put({
+        "headers": { "Authorization": "Bearer APP_USR-7373336386837931-122318-7b0464d82f7f09257558d83eccf165bb-692207214", "Content-Type": "application/json"},
+        "url": "https://api.mercadopago.com/preapproval/"+sub,
+        "body" : JSON.stringify({"status": "cancelled"})
+        
+        
+
+    }, async(error,response, body) => {
+        if(error) {
+            return res.send("error");
+        }
+
+        if(body){            
+        
+            const id_suscripcion = ""
+            await pool.query('UPDATE usuario_informacion set id_suscripcion=? WHERE id_informacion = ?', [id_suscripcion,req.user.id]);
+            req.flash('success','Plan Cancelado Satisfactoriamente')
+            res.redirect('/company/suscription')
+
+
+      }
+
+        
+    
+    
+        
+    });
+});
 
 
 
 //---------------------------------------------------------------------------------
+
+
+
 
 //---------------------Aplicando el rol de compañía al usuario ingresado-------------------------
 router.get('/new',isLoggedIn, async(req, res) => {
@@ -206,7 +331,7 @@ router.get('/public/:id',isLoggedIn,isEmployee, async(req, res) => {
 
      const oferta = JSON.parse(JSON.stringify(ofertas))
    const resultados={ user,oferta}
-   
+
  res.render('empleador/public',resultados )
 }
 });

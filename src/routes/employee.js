@@ -228,10 +228,11 @@ router.get('/public/:id',isLoggedIn,isCompany, async(req, res) => {
 
     var user = JSON.parse(JSON.stringify(user[0]))
   
-     user.fecha = moment(user.fecha).fromNow(true);  
+     user.fecha = moment(user.fecha).fromNow(true);
+     user.id = req.params.id
      const oferta = JSON.parse(JSON.stringify(ofertas))
    const resultados={ user,oferta,puntuacion}
-   
+
  res.render('trabajador/public',resultados )
 }
 });
