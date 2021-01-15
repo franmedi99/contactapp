@@ -6,6 +6,14 @@ module.exports = {
         return res.redirect('/signin');
     },
 
+    isNotLoggedIn (req, res, next) {
+        if (!req.user) {
+            return next();
+        }
+        return res.redirect('/profile');
+    },
+
+
     isEmployee (req, res, next) {
         if (req.user.tipo_perfil===2) {
             return next();

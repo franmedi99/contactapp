@@ -18,17 +18,21 @@
     
 <div class="form-row mx-auto">
        <div class="ml-auto justify-content-center mb-1" style="margin-left: 3rem !import;">
-            <a href="/employee/post/{{post.id_post}}" class="btn btn-primary btn-block">
+            <a href="/employee/post/{{post.id_publicacion}}" class="btn btn-primary btn-block">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
                 <h6>Editar post</h6>
             </a>
         </div>
          <div class="p-1"></div>
-         <div class="mr-auto justify-content-center mb-1">
-            <a href="/employee/delete/{{post.id_post}}" class="btn btn-danger btn-block">
+                 <div class="mr-auto justify-content-center mb-1">
+           
+
+      <form action="/employee/delete/{{post.id_publicacion}}" method="post" onsubmit="return confirm('Desea Eliminar esta publicacion?');">
+ <button type="submit" class="btn btn-danger btn-block">
                 <i class="fa fa-trash-o" aria-hidden="true"></i>
-                <h6>Eliminar </h6>
-            </a>
+                <h6>Eliminar Post</h6>
+ </button>
+ </form>
         </div>
 
 </div>

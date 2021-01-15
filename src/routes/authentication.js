@@ -3,17 +3,17 @@ const router = express.Router();
 const nodemailer = require('nodemailer');
 const pool = require('../database');
 const passport = require('passport');
-const { isLoggedIn } = require('../lib/auth');
+const { isLoggedIn,isNotLoggedIn } = require('../lib/auth');
 
 
 //--------------------------------Renderizado del formulario para registrarse-------------------------------------------------
-router.get('/signup', (req, res) => {
+router.get('/signup',isNotLoggedIn, (req, res) => {
   res.render('auth/signup');
 });
 
 
 //------ con passport-local estrategia(local.signup) Verifica si el email existe-Registrando usuario--------------------------
-router.post('/signup', passport.authenticate('local.signup', {
+router.post('/signup',isNotLoggedIn, passport.authenticate('local.signup', {
   successRedirect: '/auth',
   failureRedirect: '/signup',
   failureFlash: true
@@ -35,7 +35,7 @@ router.get('/auth',isLoggedIn, async(req, res) => {
 
 
 //---------------Reenviar el Email--------------------------------------------------------------------------------------------
-router.post('/resend', async(req, res) => {
+router.post('/resend',isNotLoggedIn, async(req, res) => {
   const email = req.body.email
   const rows = await pool.query('SELECT * FROM usuarios WHERE email = ? AND activacion=0', [email]);
   if (rows.length > 0) {
@@ -61,19 +61,19 @@ router.post('/resend', async(req, res) => {
         }
     })
   }else{
-    console.log(rows)
+  
   }
 });
 
 
 //-------------------------------------Formulario para Iniciar Sesion---------------------------------------------------------
-router.get('/signin', (req, res) => {
+router.get('/signin',isNotLoggedIn, (req, res) => {
   res.render('auth/signin');
 });
 
 
 //-----------------------------Inciar Sesion----------------------------------------------------------------------------------
-router.post('/signin', (req, res, next) => {
+router.post('/signin',isNotLoggedIn, (req, res, next) => {
   req.check('email', 'El email y la contraseña son requeridos').notEmpty();
   req.check('password', 'El email y la contraseña son requeridos').notEmpty();
   const errors = req.validationErrors();
@@ -90,7 +90,7 @@ router.post('/signin', (req, res, next) => {
 
 
 //--------------------------activacion de email------------------------------------------------------------------------------
-router.get('/verify', async(req, res) => {
+router.get('/verify',isNotLoggedIn, async(req, res) => {
 email=req.query.email
 codigo1=req.query.codigo
 activacion= 0;
@@ -104,8 +104,7 @@ const rows = await pool.query('SELECT * FROM usuarios WHERE email= ? AND activac
     activacion= 1;
      const act= {activacion};
     const perfil = {id_perfil,tipo_perfil}
-    console.log(perfil)
-    console.log(id_perfil)
+
      await pool.query('UPDATE usuarios set ? WHERE email = ?', [act, email2]);
 
      res.render('auth/verified');
@@ -116,7 +115,7 @@ const rows = await pool.query('SELECT * FROM usuarios WHERE email= ? AND activac
 });
 
 //-------------------------Cerrar Sesion-------------------------------------------------------------------------------------
-router.get('/logout', (req, res) => {
+router.get('/logout',isLoggedIn, (req, res) => {
   req.logOut();
   res.redirect('/');
 });
@@ -124,37 +123,34 @@ router.get('/logout', (req, res) => {
 
 //----------------Renderiza el archivo dependiendo de que tipo de cuenta tengas(1:indefinida/2:trabajador/3:empleador)-------
 router.get('/profile', isLoggedIn, async(req, res) => {
-  id=req.user.id
-  
-  const rows = await pool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
-    if(rows==undefined || rows=="" || rows==null || rows.length < 1){
-      req.flash('message', 'Ha ocurrido un error a la hora de crear tu cuenta');
-      res.redirect('/');
-    }
-    tipo=rows[0].tipo_perfil
-    const profile = await pool.query('SELECT * FROM usuario_informacion WHERE id_informacion= ?', [id]);
+
+    tipo=req.user.tipo_perfil
+    profile= req.user.perfil
     //si el usuario todavia no define su rol
   if(tipo==1){
+  
     res.render('profiles/undefined');
 
     //si el usuario es trabajador
   }else if(tipo==2){
 
     
-
-    if(profile==undefined || profile=="" || profile==null || profile.length < 1){
+    if(profile===0 || profile==="0"){
       res.render('trabajador/forms/form_trabajador')
     }else{
-      const datos = JSON.parse(JSON.stringify(profile[0]))
-      res.render('profiles/trabajador.hbs',datos);
+     
+      res.render('profiles/trabajador.hbs');
     }
       //si el usuario es empleador
   }else if(tipo==3){
-    if(profile==undefined || profile=="" || profile==null || profile.length < 1){
+
+
+    if(profile===0 || profile==="0"){
       res.render('empleador/forms/form_empleador')
     }else{
     res.render('profiles/empleador.hbs');
     }
+    
   }else{
     req.flash('message','hubo un error al autenficarte, por favor intentelo Nuevamente')
     res.redirect('/');

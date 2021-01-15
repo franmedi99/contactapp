@@ -4,7 +4,7 @@
   <table class="table col-11 mx-auto mt-3">
     <thead class="bg-primary text-light">
       <tr>
-        <th scope="col" class="text-center">Empleado</th>
+        <th scope="col" class="text-center">Empresa</th>
         <th scope="col" class="text-center">Empleo</th>
         <th scope="col" class="text-center">Accion</th>
         {{!-- <th scope="col">Cocheras</th> --}}
@@ -24,7 +24,7 @@
 
            
 
-            <form action="/employee/give-up/{{id}}/{{id_receptor}}/{{trabajo}}" method="post" onsubmit="return confirm('Realmente desea renunciar de {{nombre}}?');">
+            <form action="/employee/give-up/{{id}}/{{trabajo}}" method="post" onsubmit="return confirm('Realmente desea renunciar de {{nombre}}?');">
              <button  type="submit" class="btn btn-outline-danger btn-block mt-3 mr-3">Renunciar <i class="fa fa-times" aria-hidden="true"></i></button>
             </form>
           </th>

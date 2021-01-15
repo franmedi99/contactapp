@@ -64,7 +64,7 @@ router.get('/suscription',isLoggedIn,isCompany, async(req,res)=>{
 });
 
 router.post('/mercadopago',isLoggedIn,isCompany, async(req, res) => {
-    const {id} = req.body
+    const id = req.user.id
        
    request.get({
         "headers": { "Authorization": "Bearer APP_USR-7373336386837931-122318-7b0464d82f7f09257558d83eccf165bb-692207214"},
@@ -93,7 +93,7 @@ router.post('/mercadopago',isLoggedIn,isCompany, async(req, res) => {
         
         }else{
             const datos = JSON.parse(JSON.stringify(user))
-            console.log(datos)
+           
             res.render('empleador/historial',{datos});
         }
       
@@ -142,8 +142,6 @@ router.post('/cancel-suscription',isLoggedIn,isCompany, async(req, res) => {
     });
 });
 
-
-
 //---------------------------------------------------------------------------------
 
 
@@ -166,29 +164,29 @@ router.get('/new',isLoggedIn, async(req, res) => {
 //--------------Registrando datos de Nueva Compañía----------------------------------------------------------
 router.post('/new-company',isLoggedIn,isCompany, async(req,res)=>{
 
-    const { nombre,descripcion} = req.body;  
+    const { nombre,descripcion,telefono} = req.body;  
     var {fecha} = req.body 
-    if(nombre=="" ||fecha=="" || descripcion=="" ){
+    if(nombre==="" ||nombre===null  || nombre===undefined || fecha==="" || fecha===null || fecha===undefined || descripcion==="" || descripcion===null || descripcion===undefined || telefono==="" ||telefono===null || telefono===undefined){
      
         req.flash('message', 'Por favor Completa todos los campos');
         res.redirect('/profile')
     }else{
        if( moment(fecha).isValid()){
 
-     
-    var fecha= moment(fecha).format('L')
   
-    const id_informacion = req.user.id
-    const empleador = {
-        id_informacion,
+    const id_firma = req.user.id
+    const firma = {
+        id_firma,
         nombre,
         fecha,
-        descripcion
+        descripcion,
+        telefono
         
     };
 
 
- await pool.query('INSERT INTO usuario_informacion SET ?', [empleador]);
+ await pool.query('INSERT INTO usuarios_firma SET ?', [firma]);
+ await pool.query('UPDATE usuarios set perfil=1 WHERE id = ?', [req.user.id]);
     req.flash('success', 'Perfil Creado satisfactoriamente');
     res.redirect('/profile')
 }else{//Fecha invalida
@@ -209,9 +207,78 @@ router.get('/search',isLoggedIn,isCompany, async (req,res)=>{
 router.post('/search',isLoggedIn,isCompany, async(req,res)=>{
     var {empleo} = req.body;
     var empleo = '%'+empleo+'%'
-    const results = await pool.query(' SELECT publicaciones.id_remitente, publicaciones.trabajo ,publicaciones.descripcion,publicaciones.horario,usuario_informacion.nombre,informacion_adicional.apellido FROM publicaciones INNER JOIN usuario_informacion ON publicaciones.id_remitente = usuario_informacion.id_informacion  INNER JOIN informacion_adicional ON usuario_informacion.id_informacion = informacion_adicional.id_informacion WHERE publicaciones.trabajo like ? LIMIT 100', [empleo]);
+    const results = await pool.query('SELECT  publicaciones_empleados.id_empleado, publicaciones_empleados.trabajo ,publicaciones_empleados.descripcion,publicaciones_empleados.horario,usuarios_empleado.nombre,usuarios_empleado.apellido,usuarios_empleado.apellido,usuarios_empleado.puntuacion FROM publicaciones_empleados INNER JOIN usuarios_empleado ON publicaciones_empleados.id_empleado =  usuarios_empleado.id_empleado WHERE publicaciones_empleados.trabajo like ? ORDER BY puntuacion DESC LIMIT 100', [empleo]);
+
     await res.json(JSON.parse(JSON.stringify({results}))) 
 
+});
+
+//-------------------------------Renderizando el perfil de X empresa-----------------------------------------
+router.get('/public/:id',isLoggedIn,isEmployee, async(req, res) => {
+    const { id } = req.params;
+    const validacion = await pool.query('SELECT * FROM usuarios WHERE id = ? AND tipo_perfil=3 AND activacion=1 ', [id]);
+    if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
+        req.flash('message','Hubo un error inesperado, por favor vuelva a intentarlo');
+        res.redirect('/profile')
+    }else{
+        var profile = await pool.query('SELECT usuarios.email, usuarios_firma.nombre,  usuarios_firma.fecha, usuarios_firma.descripcion, usuarios_firma.telefono FROM usuarios_firma INNER JOIN usuarios ON  usuarios_firma.id_firma = usuarios.id WHERE  usuarios_firma.id_firma = ?', [id]);
+        const ofertas = await pool.query('SELECT * FROM publicaciones_firmas  WHERE id_firma = ?',[id])
+
+  
+        var profile = JSON.parse(JSON.stringify(profile[0]))
+    
+        profile.fecha =  moment().diff(profile.fecha, 'years');
+       
+        if(profile.fecha==="0" || profile.fecha===0){
+            profile.fecha = "este año"
+         
+        }else if(profile.fecha==="1" || profile.fecha===1){
+            profile.fecha = "hace "+profile.fecha+" año"
+        }else{
+            profile.fecha = "hace "+profile.fecha+" años"
+        }
+        profile.id = req.params.id
+         
+     const oferta = JSON.parse(JSON.stringify(ofertas))
+   const resultados={ profile,oferta}
+
+ res.render('empleador/public',resultados )
+}
+});
+
+
+//-------------------------Enviando notificacion a X empresa--------------------------------
+router.post('/new-notification/:id',isLoggedIn,isEmployee, async(req,res)=>{
+    const { id } = req.params;
+    var {trabajo} = req.body;
+
+    const validacion = await pool.query('SELECT trabajo FROM publicaciones_firmas WHERE id_firma = ? AND trabajo= ?', [id,trabajo]);
+    if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
+        req.flash('message','Hubo un error inesperado');
+        res.redirect('/employee/search')
+    }else{
+        
+        const validacion2 = await pool.query('SELECT * FROM notificaciones_firmas WHERE id_empleado = ?', [req.user.id]);
+       
+        if( validacion2==="" || validacion2.length<1){
+        const id_firma = id;
+        const id_empleado = req.user.id;
+        const contenido = trabajo
+        
+        const post = {id_firma,id_empleado,contenido}
+       await pool.query('INSERT INTO notificaciones_firmas SET ?',[post]);
+       req.flash('success','Solicitud enviada Satisfactoriamente');
+       res.redirect('/employee/search')
+
+        }else{
+            req.flash('message','Ya has enviado una solicitud anteriormente a esta empresa');
+            res.redirect('/employee/search')
+        }
+
+
+
+
+    }
 })
 
 
@@ -219,56 +286,53 @@ router.post('/search',isLoggedIn,isCompany, async(req,res)=>{
 router.get('/new-post',isLoggedIn,isCompany, async(req,res)=>{
 
     res.render('empleador/forms/new_emp')
-})
+});
 
 
 //-------------------Creando nuevo POST de oferta de trabajo-------------------------------------------------
 router.post('/new-post',isLoggedIn,isCompany, async(req,res)=>{
 
     const { trabajo,descripcion,horario} = req.body;
-    if(trabajo =="" || horario==""){
+    if(trabajo==="" || trabajo===undefined  || trabajo===null || horario==="" || horario===null || horario===undefined){
         req.flash('message','Por Favor Complete todos los campos obligatorios')
         res.redirect('/company/new-post')
     }else{
    if(horario==="FULL-TIME"||horario==="PART-TIME"){
 
-    const tipo_de_publicacion = 2
-const id_remitente = req.user.id
+    const id_firma = req.user.id
     const post = {
+        id_firma,
         trabajo,
         descripcion,
-        horario,
-        id_remitente,
-        tipo_de_publicacion
-        
+        horario 
     };
-   await pool.query('INSERT INTO publicaciones SET ?', [post]);
-    req.flash('success', 'Post ingresado satisfactoriamente');
+   await pool.query('INSERT INTO publicaciones_firmas SET ?', [post]);
+    req.flash('success', 'Oferta de empleo creada Satisfactoriamente');
     res.redirect('/profile')
 }else{
     req.flash('message','Ocurrio un error inesperado')
     res.redirect('/company/new-post')
 }
 }//fin de la comprobacion
-})
+});
 
 
 //-------------------------------Obteniendo todas las publicaciones de X usuario-------------------------------
 router.get('/posts',isLoggedIn,isCompany,async(req,res)=>{
-    const posts = await pool.query('SELECT * FROM publicaciones WHERE id_remitente = ?', [req.user.id]);
+    const posts = await pool.query('SELECT * FROM publicaciones_firmas WHERE id_firma = ?', [req.user.id]);
     res.render('empleador/all-posts', { posts });
-})
+});
 
 
 //-----------------------------Renderiza el formulario de X post----------------------------------------------
 router.get('/post/:id',isLoggedIn,isCompany, async (req, res) => {
     const { id } = req.params;
-    var post = await pool.query('SELECT * FROM publicaciones WHERE id_post = ?', [id]);
+    var post = await pool.query('SELECT * FROM publicaciones_firmas WHERE id_publicacion = ?', [id]);
     var post = JSON.parse(JSON.stringify(post[0]))
 
-    const remitente = post.id_remitente
+    const firma= post.id_firma
 
-    if(req.user.id===remitente){
+    if(req.user.id===firma){
 
     res.render('empleador/edit-post', {post});
 }else{
@@ -280,30 +344,31 @@ router.get('/post/:id',isLoggedIn,isCompany, async (req, res) => {
 
 //-----------------------------Actualizando datos de X post-------------------------
 router.post('/post/:id',isLoggedIn,isCompany, async (req, res) => {
-    const { trabajo, descripcion} = req.body; 
+    const { trabajo, descripcion,horario} = req.body; 
     const { id } = req.params;
-    var post = await pool.query('SELECT * FROM publicaciones WHERE id_post = ?', [id]);
+    var post = await pool.query('SELECT * FROM publicaciones_firmas WHERE id_publicacion = ?', [id]);
     var post = JSON.parse(JSON.stringify(post[0]))
 
-    const remitente = post.id_remitente
+    const firma = post.id_firma
 
 
     
-    if(req.user.id===remitente){
-    if(trabajo==""){
+    if(req.user.id===firma){
+    if(trabajo===""){
 
-    req.flash('message','El campo Trabajo es obligatorio, por favor completelo')
+    req.flash('message','El campo Trabajo es obligatorio')
     res.redirect('/company/post/'+id)
     }else{
 
     const newLink = {
         trabajo,
-        descripcion
+        descripcion,
+        horario
     
     };
 
-    await pool.query('UPDATE publicaciones set ? WHERE id_post = ?', [newLink, id]);
-    req.flash('success', 'Post Editado Satisfactoriamente');
+    await pool.query('UPDATE publicaciones_firmas set ? WHERE id_publicacion = ?', [newLink, id]);
+    req.flash('success', 'Publicacion editada Satisfactoriamente');
     res.redirect('/company/posts');
 }//fin de verificacion campo (trabajo) que no este vacio 
 }else{//si el id es diferente del post
@@ -313,75 +378,16 @@ router.post('/post/:id',isLoggedIn,isCompany, async (req, res) => {
 });
 
 
-//-------------------------------Renderizando el perfil de X empleado-----------------------------------------
-router.get('/public/:id',isLoggedIn,isEmployee, async(req, res) => {
-    const { id } = req.params;
-    const validacion = await pool.query('SELECT * FROM usuarios WHERE id = ? AND tipo_perfil=3 AND activacion=1 ', [id]);
-    if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
-        req.flash('message','Hubo un error inesperado, por favor vuelva a intentarlo');
-        res.redirect('/profile')
-    }else{
-        var user = await pool.query('SELECT usuarios.email, usuario_informacion.nombre, usuario_informacion.fecha, usuario_informacion.descripcion,usuario_informacion.telefono FROM usuario_informacion INNER JOIN usuarios ON usuario_informacion.id_informacion = usuarios.id WHERE usuario_informacion.id_informacion = ?', [id]);
-        const ofertas = await pool.query('SELECT * FROM publicaciones  WHERE id_remitente= ?',[id])
-
-  
-    var user = JSON.parse(JSON.stringify(user[0]))
-    
-     user.fecha = moment(user.fecha).fromNow();  
-
-     const oferta = JSON.parse(JSON.stringify(ofertas))
-   const resultados={ user,oferta}
-
- res.render('empleador/public',resultados )
-}
-});
-
-
-//-------------------------Enviando notificacion a X empleado--------------------------------
-router.post('/new-notification/:id',isLoggedIn,isEmployee, async(req,res)=>{
-    const { id } = req.params;
-    var {trabajo} = req.body;
-
-    const validacion = await pool.query('SELECT trabajo FROM publicaciones WHERE id_remitente = ? AND trabajo= ?', [id,trabajo]);
-    if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
-        console.log('error en validacion 1')
-        req.flash('message','Hubo un error inesperado, por favor vuelva a intentarlo');
-        res.redirect('/profile')
-    }else{
-        
-        const validacion2 = await pool.query('SELECT * FROM notificaciones WHERE id_remitente = ?', [req.user.id]);
-        if( validacion2=="" || validacion2==null){
-        const id_remitente = req.user.id;
-        const id_receptor = id;
-        const contenido = trabajo
-        
-                const post = {id_remitente,id_receptor,contenido}
-       await pool.query('INSERT INTO notificaciones SET ?', [post]);
-       req.flash('success','Solicitud enviada Satisfactoriamente');
-       res.redirect('/employee/search')
-
-        }else{
-            req.flash('message','Ya has enviado una solicitud anteriormente a este empleado');
-            res.redirect('/employee/search')
-        }
-
-
-
-
-    }
-})
-
-
 //------------------------Borrando una publicacion-----------------------------------------------------------
 router.get('/delete/:id',isLoggedIn,isCompany, async (req, res) => {
     const { id } = req.params;
 
-    var validacion = await pool.query('SELECT id_remitente FROM publicaciones WHERE id_post = ?', [id]);
+    var validacion = await pool.query('SELECT id_firma FROM publicaciones_firmas WHERE id_publicacion = ?', [id]);
     var validacion = JSON.parse(JSON.stringify(validacion[0]))
-    var validacion= validacion.id_remitente
+    var validacion= validacion.id_firma
     if(validacion===req.user.id){
-    await pool.query('DELETE FROM publicaciones WHERE id_post = ?', [id]);
-    req.flash('success', 'Post Eliminado Satisfactoriamente');
+    await pool.query('DELETE FROM publicaciones_firmas WHERE id_publicacion = ?', [id]);
+    req.flash('success', 'Publicacion elimitada Satisfactoriamente');
     res.redirect('/company/posts');
     
 }else{
@@ -393,13 +399,13 @@ router.get('/delete/:id',isLoggedIn,isCompany, async (req, res) => {
 
 //-------------------------renderizando todas las notificaciones de X usuario--------------------------------
 router.get('/notifications',isLoggedIn,isCompany, async(req,res)=>{
-    var notificaciones = await pool.query('SELECT notificaciones.id_remitente, usuario_informacion.nombre,informacion_adicional.apellido,notificaciones.contenido FROM notificaciones INNER JOIN usuario_informacion ON notificaciones.id_remitente = usuario_informacion.id_informacion INNER JOIN informacion_adicional ON usuario_informacion.id_informacion = informacion_adicional.id_informacion  WHERE id_receptor  = ?', [req.user.id]);
-    const employees = await pool.query('SELECT empleados_activos.id, empleados_activos.id_receptor, usuario_informacion.nombre ,informacion_adicional.apellido, empleados_activos.trabajo FROM empleados_activos INNER JOIN usuario_informacion ON empleados_activos.id_receptor = usuario_informacion.id_informacion INNER JOIN informacion_adicional ON usuario_informacion.id_informacion = informacion_adicional.id_informacion  WHERE empleados_activos.id_remitente = ? AND empleados_activos.mostrar=0', [req.user.id]);
-
+    var notificaciones = await pool.query('SELECT notificaciones_firmas.id_empleado, usuarios_empleado.nombre,usuarios_empleado.apellido,notificaciones_firmas.contenido FROM notificaciones_firmas INNER JOIN usuarios_empleado ON notificaciones_firmas.id_empleado = usuarios_empleado.id_empleado WHERE id_firma  = ?', [req.user.id]);
+    const employees = await pool.query('SELECT empleados_activos.id, empleados_activos.id_empleado, usuarios_empleado.nombre ,usuarios_empleado.apellido, empleados_activos.trabajo FROM empleados_activos INNER JOIN usuarios_empleado ON empleados_activos.id_empleado = usuarios_empleado.id_empleado  WHERE empleados_activos.id_firma = ? AND empleados_activos.mostrar=0', [req.user.id]);
+    const confirmaciones = await pool.query('SELECT usuarios_empleado.id_empleado,usuarios_empleado.nombre,usuarios_empleado.apellido,confirmaciones.trabajo FROM confirmaciones INNER JOIN usuarios_empleado ON confirmaciones.id_empleado = usuarios_empleado.id_empleado WHERE id_firma = ?',[req.user.id])
 
 
     
-    res.render('empleador/all-notifications', {notificaciones, employees});
+    res.render('empleador/all-notifications', {notificaciones, employees,confirmaciones});
 })
 
 
@@ -407,29 +413,27 @@ router.get('/notifications',isLoggedIn,isCompany, async(req,res)=>{
 router.post('/new-employee/:id',isLoggedIn,isCompany, async(req,res)=>{
         const {id} = req.params;
         const {respuesta,trabajo} = req.body;
-        var id_remitente = id
-        var id_receptor = req.user.id
-        const validacion= await pool.query('SELECT * FROM notificaciones WHERE id_remitente = ?  AND id_receptor = ?',[id_remitente,id_receptor])
+        const validacion= await pool.query('SELECT * FROM confirmaciones WHERE id_firma = ? AND  id_empleado = ? AND trabajo=?',[req.user.id,id,trabajo])
         if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
         req.flash('message','Ha ocurrido un error inesperado, Por favor vuelva a intentarlo');
         res.redirect('/company/notifications')
         }else{
        
             if (respuesta==="accept") {
-               var id_remitente =req.user.id
-               var id_receptor = id
+               var id_firma =req.user.id
+               var id_empleado = id
                 const info={
-                    id_remitente,
-                    id_receptor,
+                    id_firma,
+                    id_empleado,
                     trabajo
                 }
                 await pool.query('INSERT INTO empleados_activos SET ?', [info]);
-                await pool.query('DELETE FROM notificaciones WHERE id_remitente = ?', [id]);
+                await pool.query('DELETE FROM confirmaciones WHERE id_empleado = ? AND id_firma=? AND trabajo=?', [id,req.user.id,trabajo]);
                 req.flash('success','Felicitaciones, ya tienes un nuevo empleado')
                 res.redirect('/company/notifications')
 
             }else if (respuesta==="deny") {
-                await pool.query('DELETE FROM notificaciones WHERE id_remitente = ?', [id_remitente]);
+                await pool.query('DELETE FROM confirmaciones WHERE id_empleado = ? AND id_firma=? AND trabajo=?', [id,req.user.id,trabajo]);
                 req.flash('success','Empleado Rechazado Satisfactoriamente')
                 res.redirect('/company/notifications')
             }else{
@@ -449,52 +453,57 @@ router.post('/new-employee/:id',isLoggedIn,isCompany, async(req,res)=>{
 
 //------------------------Mostrando todos los empleados actuales de X empresa----------------------------------
 router.get('/employees',isLoggedIn,isCompany, async(req,res)=>{
-    const employees = await pool.query('SELECT empleados_activos.id, empleados_activos.id_receptor, usuario_informacion.nombre ,informacion_adicional.apellido, empleados_activos.trabajo FROM empleados_activos INNER JOIN usuario_informacion ON empleados_activos.id_receptor = usuario_informacion.id_informacion INNER JOIN informacion_adicional ON usuario_informacion.id_informacion = informacion_adicional.id_informacion  WHERE empleados_activos.id_remitente = ? AND empleados_activos.mostrar=1', [req.user.id]);
+    const employees = await pool.query('SELECT empleados_activos.id, empleados_activos.id_empleado, usuarios_empleado.nombre ,usuarios_empleado.apellido, empleados_activos.trabajo FROM empleados_activos INNER JOIN usuarios_empleado ON empleados_activos.id_empleado = usuarios_empleado.id_empleado WHERE empleados_activos.id_firma= ? AND empleados_activos.mostrar=1', [req.user.id]);
 
     res.render('empleador/all-employees', { employees });
 })
 
 
 //-------------------------Remderizando el formulario para calificar X empleado
-router.get('/dismiss/:id/:id_receptor/:trabajo',isLoggedIn,isCompany, async (req, res) => {
-        const {id,id_receptor,trabajo}= req.params
+router.get('/dismiss/:id/:id_empleado/:trabajo',isLoggedIn,isCompany, async (req, res) => {
+        const {id,id_empleado,trabajo}= req.params
 
-    const validacion = await pool.query('SELECT * FROM empleados_activos WHERE id_remitente = ? AND id = ? AND id_receptor = ?', [req.user.id,id,id_receptor]);
+    const validacion = await pool.query('SELECT * FROM empleados_activos WHERE  id = ? AND  id_firma = ?  AND id_empleado = ?', [id,req.user.id,id_empleado]);
 
-    if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
+    if(validacion===undefined || validacion==="" || validacion===null || validacion.length < 1){
     req.flash('message','Ha ocurrido un error inesperado Por favor vuelve a intentarlo');
     res.redirect('/company/employees')
     }else{
-    const datos={id,id_receptor,trabajo}
+    const datos={id,id_empleado,trabajo}
         res.render('empleador/calificar',datos);
 }
 });
 
 
 //--------------------------Borrando empleado de X empresa----------------------------------------------------
-router.post('/dismiss/:id/:id_receptor/:trabajo',isLoggedIn,isCompany, async (req, res) => {
-    var {id,id_receptor,trabajo}= req.params
+router.post('/dismiss/:id/:id_empleado/:trabajo',isLoggedIn,isCompany, async (req, res) => {
+    var {id,id_empleado,trabajo}= req.params
     const {review,puntuacion} = req.body
-    if( puntuacion==="1" ||puntuacion==="2" || puntuacion==="3"|| puntuacion==="4"||puntuacion==="5"){
-    const validacion = await pool.query('SELECT * FROM empleados_activos WHERE id_remitente = ? AND id = ? AND id_receptor = ?', [req.user.id,id,id_receptor]);
+    if( puntuacion==="1" ||puntuacion===1 ||  puntuacion==="2" || puntuacion===2 || puntuacion==="3"|| puntuacion===3 || puntuacion==="4" || puntuacion===4 || puntuacion==="5" || puntuacion===5 && puntuacion){
+    const validacion = await pool.query('SELECT * FROM empleados_activos WHERE id = ? AND  id_firma = ?  AND id_empleado = ?', [id,req.user.id,id_empleado]);
 
     if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
     req.flash('message','Ha ocurrido un error inesperado Por favor vuelve a intentarlo');
     res.redirect('/company/employees')
     }else{
-        var id_remitente =req.user.id
+        var id_firma =req.user.id
 
          const info={
-             id_remitente,
-             id_receptor,
+             id_firma,
+             id_empleado,
              puntuacion,
              trabajo,
              review
          }
   
        await pool.query('INSERT INTO puntuacion SET ?', [info]);
-       await pool.query('DELETE FROM empleados_activos WHERE id_remitente = ? AND id= ?', [req.user.id,id]);
-        req.flash('success','Felicitaciones, Empleado calificado Satisfactoriamente')
+       await pool.query('DELETE FROM empleados_activos WHERE id= ? AND id_firma = ?', [id,req.user.id]);
+       var nota = await pool.query('SELECT ROUND(AVG(puntuacion) ,1) AS "puntuacion" FROM puntuacion WHERE id_empleado= ?',[id_empleado])
+       var nota = JSON.parse(JSON.stringify(nota[0]))
+       var nota = nota.puntuacion
+
+       await pool.query('UPDATE usuarios_empleado set puntuacion=? WHERE id_empleado = ?', [nota,id_empleado]);
+        req.flash('success','Empleado calificado Satisfactoriamente')
         res.redirect('/company/employees')
 }
 }else{//si puntuacion no es del 1 al 5
@@ -502,6 +511,5 @@ router.post('/dismiss/:id/:id_receptor/:trabajo',isLoggedIn,isCompany, async (re
     res.redirect('/company/employees')
 }
 });
-
 
 module.exports = router;

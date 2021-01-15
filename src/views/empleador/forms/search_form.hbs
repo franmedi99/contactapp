@@ -60,9 +60,9 @@ const enviar = document.querySelector('#enviar');
   </div> 
                                           <div class="col-12">
                                                                        <div class="input-group  ">
-                                     <a href=" /employee/public/${result.id_remitente}" class="btn btn-primary mx-auto text-center" type="submit">Ver Perfil</a>
+                                     <a href=" /employee/public/${result.id_empleado}" class="btn btn-primary mx-auto text-center" type="submit">Ver Perfil</a>
                                    <div class="input-group-append mr-auto ">
-                                    <form action="/employee/new-notification/${result.id_remitente}" method="post"
+                                    <form action="/employee/new-notification/${result.id_empleado}" method="post"
                                         onsubmit="return confirm('Desea Enviar una Solicitud de trabajo a ${result.nombre} ${result.apellido}?');">
                                               <input type="hidden" name="trabajo" value="${result.trabajo}">
                                         <button type="submit" class="btn btn-success ">Enviar Solicitud</button>

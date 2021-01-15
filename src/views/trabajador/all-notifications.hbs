@@ -14,20 +14,20 @@
 <div class="input-group mb-3">
 
 
-    <div class=" form-row mx-auto "><h5 class="text-center mt-4"><a href="/company/public/{{notificacion.id_remitente}}">{{notificacion.nombre}}</a>   Te ha enviado una solicitud de trabajo (trabajo: {{notificacion.contenido}})</h5></div>
+    <div class=" form-row mx-auto "><h5 class="text-center mt-4"><a href="/company/public/{{notificacion.id_firma}}" target="_blank">{{notificacion.nombre}}</a>   Te ha enviado una solicitud de trabajo (trabajo: {{notificacion.contenido}})</h5></div>
       
       <div class="input-group-append">
 
   
                                 
-                                     <form action="/employee/new-employee/{{notificacion.id_remitente}}" method="post" onsubmit="return confirm('Desea Aceptar a este empleado?');">
+                                     <form action="/employee/new-employee/{{notificacion.id_firma}}/{{notificacion.id_notificacion}}" method="post" onsubmit="return confirm('Desea Aceptar a este empleado?');">
                                         <input type="hidden" name="respuesta" value="accept">
                                         <input type="hidden" name="trabajo" value="{{notificacion.contenido}}">
                                       <button type="submit" class="btn btn-outline-success mr-1 mt-3">Aceptar <i class="fa fa-check" aria-hidden="true"></i></button>
                                     </form>
                               
                                   
-                                    <form action="/employee/new-employee/{{notificacion.id_remitente}}" method="post" onsubmit="return confirm('Desea Rechazar a este empleado?');">
+                                    <form action="/employee/new-employee/{{notificacion.id_firma}}/{{notificacion.id_notificacion}}" method="post" onsubmit="return confirm('Desea Rechazar a este empleado?');">
                                         <input type="hidden" name="respuesta" value="deny">
                                       <button type="submit" class="btn btn-outline-danger mt-3 mr-3">Rechazar <i class="fa fa-times" aria-hidden="true"></i></button>
                                     </form>
