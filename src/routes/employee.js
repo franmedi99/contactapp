@@ -4,6 +4,21 @@ const moment = require('moment');
 moment.locale('es');
 const pool = require('../database');
 const { isLoggedIn, isCompany,isEmployee } = require('../lib/auth');
+const fs = require('fs-extra')
+const { getVideoDurationInSeconds } = require('get-video-duration');
+const cloudinary = require('cloudinary');
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_KEY,
+    api_secret: process.env.CLOUD_SECRET
+})
+
+
+
+
+
+
+
 
 
 //---------------------Aplicando el rol de empleado al usuario ingresado-------------------------
@@ -37,23 +52,53 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
        if( moment(fecha).isValid()){
 
      
-    const id_empleado = req.user.id
-    const trabajador = {
-        id_empleado,
-        nombre,
-        apellido,
-        descripcion,
-        fecha,
-       telefono,
-        sexo,
-        estado_civil
-        
-    };
+ 
 
-await pool.query('INSERT INTO usuarios_empleado SET ?', [trabajador]);
-await pool.query('UPDATE usuarios set perfil=1 WHERE id = ?', [req.user.id]);
-req.flash('success', 'Perfil Creado satisfactoriamente');
-res.redirect('/profile')
+    if(req.fileValidationError) {
+        req.flash('message', req.fileValidationError)
+        res.redirect('/profile')
+        }else{
+    if(req.file){
+    await getVideoDurationInSeconds(req.file.path).then(async(duration) => {
+    var a = Math.round(duration);
+    if(a<10){
+       const result = await cloudinary.v2.uploader.upload(req.file.path,{resource_type: "video"});
+        await fs.unlink(req.file.path)
+        const video= result.secure_url
+        const id_empleado = req.user.id
+        const trabajador = {
+            id_empleado,
+            nombre,
+            apellido,
+            descripcion,
+            fecha,
+           telefono,
+            sexo,
+            estado_civil,
+            video
+        };
+        await pool.query('INSERT INTO usuarios_empleado SET ?', [trabajador]);
+        await pool.query('UPDATE usuarios set perfil=1 WHERE id = ?', [req.user.id]);
+        req.flash('success', 'Perfil Creado satisfactoriamente');
+        res.redirect('/profile')
+    }else{
+        await fs.unlink(req.file.path)
+        req.flash('message','el video no puede durar mas de 10 segundos')
+        res.redirect('/profile')
+    }
+    //22mb de maximo
+    }) .catch(error => {
+    return res.send(error)
+    })
+    }
+    }//fin de si no hay req.fileValidationError
+
+
+
+
+
+
+
 }else{//Fecha invalida
     req.flash('message', 'Fecha Invalida');
     res.redirect('/profile')
@@ -127,7 +172,7 @@ router.get('/public/:id',isLoggedIn,isCompany, async(req, res) => {
         req.flash('message','Hubo un error inesperado, por favor vuelva a intentarlo');
         res.redirect('/profile')
     }else{
-    var profile = await pool.query('SELECT usuarios.email, usuarios_empleado.nombre,usuarios_empleado.apellido, usuarios_empleado.fecha, usuarios_empleado.descripcion, usuarios_empleado.sexo,usuarios_empleado.estado_civil,usuarios_empleado.telefono FROM usuarios_empleado INNER JOIN usuarios ON usuarios_empleado.id_empleado = usuarios.id WHERE usuarios_empleado.id_empleado = ?', [id]);
+    var profile = await pool.query('SELECT usuarios.email, usuarios_empleado.nombre,usuarios_empleado.apellido, usuarios_empleado.fecha, usuarios_empleado.descripcion, usuarios_empleado.sexo,usuarios_empleado.estado_civil,usuarios_empleado.telefono,usuarios_empleado.video FROM usuarios_empleado INNER JOIN usuarios ON usuarios_empleado.id_empleado = usuarios.id WHERE usuarios_empleado.id_empleado = ?', [id]);
     const ofertas = await pool.query('SELECT * FROM publicaciones_empleados  WHERE id_empleado= ?',[id])
     var puntuacion = await pool.query('SELECT puntuacion  AS "puntuacion" FROM usuarios_empleado WHERE id_empleado= ?',[id])
     var puntuacion = JSON.parse(JSON.stringify(puntuacion[0]))
@@ -136,17 +181,23 @@ router.get('/public/:id',isLoggedIn,isCompany, async(req, res) => {
     var puntuacion=undefined
     
    }
- 
-
+    var video = profile[0].video
     var profile = JSON.parse(JSON.stringify(profile[0]))
   
     profile.fecha =  moment().diff(profile.fecha, 'years');
     
     profile.id = req.params.id
      const oferta = JSON.parse(JSON.stringify(ofertas))
-   const resultados={profile,oferta,puntuacion}
+     
 
- res.render('trabajador/public',resultados )
+     if(video==="" || video===undefined){
+    const resultados={profile,oferta,puntuacion}
+    res.render('trabajador/public',resultados )
+     }else{
+    const resultados={profile,oferta,puntuacion,video}
+    res.render('trabajador/public',resultados )
+}
+ 
 }
 });
 

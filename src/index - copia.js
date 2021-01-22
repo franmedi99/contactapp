@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+
 const path = require('path');
 const exphbs = require('express-handlebars');
 const session = require('express-session');
@@ -9,11 +10,14 @@ const flash = require('connect-flash');
 const MySQLStore = require('express-mysql-session')(session);
 const bodyParser = require('body-parser');
 const multer = require('multer');
-require('dotenv').config();
+
+const fs = require('fs');
+const readline = require('readline');
+const {google} = require('googleapis');
+
+
 
 const { database } = require('./keys');
-
-
 
 
 
@@ -63,7 +67,7 @@ app.use(multer({
 }).single('video'));
 
 app.use(session({
-  secret: process.env.PALABRA_SECRETA,
+  secret: 'palabrasecreta',
   resave: false,
   saveUninitialized: false,
   store: new MySQLStore(database)
@@ -94,6 +98,5 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Starting
 app.listen(app.get('port'), () => {
-  console.log('Server on port', app.get('port'));
-  console.log('Environment: ',process.env.NODE_ENV)
+  console.log('Server is in port', app.get('port'));
 });

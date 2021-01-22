@@ -19,6 +19,15 @@
                 <div class="card border-primary col-md-12 mx-auto text-center offset-md-1">
                    <div class="card-header bg-muted border text-primary" ><h4>{{profile.nombre}} {{profile.apellido}}</h3></div>
                   <div class="card-body">
+                    {{#if video}}
+                    <div class="mx-auto">
+                      <h4>Video de presentacion</h4>
+                      <video src="{{video}}" poster="{{video}}" class="img-fluid" controls></video>
+                      
+                    </div>
+                    <hr>
+                    {{/if}}
+
                             <div class="mx-auto text-center">
                           
                               
