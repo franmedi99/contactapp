@@ -126,14 +126,14 @@
 
   
                                 
-                                     <form action="/company/new-employee/{{notificacion.id_empelado}}" method="post" onsubmit="return confirm('Desea Aceptar a este empleado?');">
+                                     <form action="/company/new-confirmation/{{notificacion.id_empleado}}" method="post" onsubmit="return confirm('Desea Aceptar a este empleado?');">
                                         <input type="hidden" name="respuesta" value="accept">
                                         <input type="hidden" name="trabajo" value="{{notificacion.contenido}}">
                                       <button type="submit" class="btn btn-outline-success mr-1 mt-3">Aceptar <i class="fa fa-check" aria-hidden="true"></i></button>
                                     </form>
                               
                                   
-                                    <form action="/company/new-employee/{{notificacion.id_empleado}}" method="post" onsubmit="return confirm('Desea Rechazar a este empleado?');">
+                                    <form action="/company/new-confirmation/{{notificacion.id_empleado}}" method="post" onsubmit="return confirm('Desea Rechazar a este empleado?');">
                                         <input type="hidden" name="trabajo" value="{{notificacion.contenido}}">
                                         <input type="hidden" name="respuesta" value="deny">
                                         

@@ -251,7 +251,7 @@ router.post('/new-notification/:id',isLoggedIn,isEmployee, async(req,res)=>{
 
 
     }
-})
+});
 
 
 //-------------------Renderizando el formulario de nueva oferta de trabajo----------------------------------- 
@@ -378,7 +378,49 @@ router.get('/notifications',isLoggedIn,isCompany, async(req,res)=>{
 
     
     res.render('empleador/all-notifications', {notificaciones, employees,confirmaciones});
-})
+});
+
+
+//-------------------------Enviando a fase de confirmacion/rechazando oferta de X empleado-------------------------------
+router.post('/new-confirmation/:id_empleado',isLoggedIn,isCompany, async(req,res)=>{
+    const {id_empleado} = req.params;
+    const {respuesta,trabajo} = req.body;
+   const id_firma= req.user.id
+    const validacion= await pool.query('SELECT * FROM notificaciones_firmas WHERE id_empleado=? AND id_firma=? AND contenido=?',[id_empleado,req.user.id,trabajo])
+    if(validacion==undefined || validacion=="" || validacion==null || validacion.length < 1){
+    req.flash('message','Ha ocurrido un error inesperado, Por favor vuelva a intentarlo');
+    res.redirect('/company/notifications');
+    }else{
+   
+        if (respuesta==="accept"){
+
+            const info={
+                id_firma,
+                id_empleado,
+                trabajo
+            }
+            await pool.query('INSERT INTO confirmaciones SET ?', [info]);
+            await pool.query('DELETE FROM notificaciones_firmas WHERE id_empleado = ? AND contenido=?', [id_empleado,trabajo]);
+            req.flash('success','Felicitaciones, Solo falta una confirmación para que este empleado este registrado a tu firma')
+            res.redirect('/company/notifications')
+
+        }else if (respuesta==="deny") {
+            await pool.query('DELETE FROM notificaciones_firmas WHERE id_empleado = ? AND contenido=?', [id_empleado,trabajo]);
+            req.flash('success','Empleado Rechazado Satisfactoriamente')
+            res.redirect('/company/notifications')
+        }else{
+            req.flash('message','Ha ocurrido un error inesperado, Por favor vuelva a intentarlo');
+            res.redirect('/company/notifications')
+        }
+
+
+
+
+        
+
+
+    }//en el caso de que todos los datos sean correctos
+});
 
 
 //-------------------------aceptando/rechazando oferta de X empleado--------------------------------
@@ -420,7 +462,7 @@ router.post('/new-employee/:id',isLoggedIn,isCompany, async(req,res)=>{
 
 
         }//en el caso de que todos los datos sean correctos
-})
+});
 
 
 //------------------------Mostrando todos los empleados actuales de X empresa----------------------------------
@@ -428,7 +470,7 @@ router.get('/employees',isLoggedIn,isCompany, async(req,res)=>{
     const employees = await pool.query('SELECT empleados_activos.id, empleados_activos.id_empleado, usuarios_empleado.nombre ,usuarios_empleado.apellido, empleados_activos.trabajo FROM empleados_activos INNER JOIN usuarios_empleado ON empleados_activos.id_empleado = usuarios_empleado.id_empleado WHERE empleados_activos.id_firma= ? AND empleados_activos.mostrar=1', [req.user.id]);
 
     res.render('empleador/all-employees', { employees });
-})
+});
 
 
 //-------------------------Remderizando el formulario para calificar X empleado

@@ -43,7 +43,7 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
     
     
          const { nombre,apellido,sexo,estado_civil,descripcion,telefono} = req.body;   
-    var {fecha} = req.body 
+    var {fecha,facebook,instagram,twitter} = req.body 
     if(nombre===""  || nombre===null  || nombre===undefined  || apellido===""  ||  apellido===null   ||  apellido===undefined  ||sexo==="" ||sexo===null ||sexo===undefined || estado_civil==="" || estado_civil===null || estado_civil===undefined || fecha==="" || fecha===null || fecha===undefined || descripcion==="" || descripcion===null || descripcion===undefined || telefono==="" || telefono===null || telefono===undefined){
      
         req.flash('message', 'Por favor Completa todos los campos');
@@ -51,14 +51,20 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
     }else{
        if( moment(fecha).isValid()){
 
-     
+     if(instagram!==""){
+        var instagram = "instagram.com/"+instagram
+     }
+     if(twitter!==""){
+         var twitter = "twitter.com/"+twitter
+     }
  
 
     if(req.fileValidationError) {
         req.flash('message', req.fileValidationError)
         res.redirect('/profile')
         }else{
-    if(req.file){
+            console.log(req.file)
+    if(req.file!==undefined){
     await getVideoDurationInSeconds(req.file.path).then(async(duration) => {
     var a = Math.round(duration);
     if(a<10){
@@ -75,7 +81,10 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
            telefono,
             sexo,
             estado_civil,
-            video
+            video,
+            facebook,
+            instagram,
+            twitter
         };
         await pool.query('INSERT INTO usuarios_empleado SET ?', [trabajador]);
         await pool.query('UPDATE usuarios set perfil=1 WHERE id = ?', [req.user.id]);
@@ -90,6 +99,28 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
     }) .catch(error => {
     return res.send(error)
     })
+    }else{
+
+
+        const id_empleado = req.user.id
+        const trabajador = {
+            id_empleado,
+            nombre,
+            apellido,
+            descripcion,
+            fecha,
+           telefono,
+            sexo,
+            estado_civil,
+            facebook,
+            instagram,
+            twitter
+       
+        };
+        await pool.query('INSERT INTO usuarios_empleado SET ?', [trabajador]);
+        await pool.query('UPDATE usuarios set perfil=1 WHERE id = ?', [req.user.id]);
+        req.flash('success', 'Perfil Creado satisfactoriamente');
+        res.redirect('/profile')
     }
     }//fin de si no hay req.fileValidationError
 
@@ -172,7 +203,7 @@ router.get('/public/:id',isLoggedIn,isCompany, async(req, res) => {
         req.flash('message','Hubo un error inesperado, por favor vuelva a intentarlo');
         res.redirect('/profile')
     }else{
-    var profile = await pool.query('SELECT usuarios.email, usuarios_empleado.nombre,usuarios_empleado.apellido, usuarios_empleado.fecha, usuarios_empleado.descripcion, usuarios_empleado.sexo,usuarios_empleado.estado_civil,usuarios_empleado.telefono,usuarios_empleado.video FROM usuarios_empleado INNER JOIN usuarios ON usuarios_empleado.id_empleado = usuarios.id WHERE usuarios_empleado.id_empleado = ?', [id]);
+    var profile = await pool.query('SELECT usuarios.email, usuarios_empleado.nombre,usuarios_empleado.apellido, usuarios_empleado.fecha, usuarios_empleado.descripcion, usuarios_empleado.sexo,usuarios_empleado.estado_civil,usuarios_empleado.telefono,usuarios_empleado.video,usuarios_empleado.facebook,usuarios_empleado.instagram,usuarios_empleado.twitter FROM usuarios_empleado INNER JOIN usuarios ON usuarios_empleado.id_empleado = usuarios.id WHERE usuarios_empleado.id_empleado = ?', [id]);
     const ofertas = await pool.query('SELECT * FROM publicaciones_empleados  WHERE id_empleado= ?',[id])
     var puntuacion = await pool.query('SELECT puntuacion  AS "puntuacion" FROM usuarios_empleado WHERE id_empleado= ?',[id])
     var puntuacion = JSON.parse(JSON.stringify(puntuacion[0]))

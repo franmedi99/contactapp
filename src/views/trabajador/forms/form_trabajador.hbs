@@ -8,12 +8,12 @@
   <div class="card-body">
     
     <form action="/employee/new" method="post" enctype="multipart/form-data">
-<hr>
+
 <h3 class="text-center">Subir video de presentacion (Opcional)</h3>
 <h6>El video consiste en presentarte en 10 segundos o menos. </h6>
 
           <div id="div_file" class="mx-auto">
-            <h4 id="texto">Subir video </h4>
+            <h4 id="texto">Subir video <br><i class="fa fa-video-camera  fa-lg" aria-hidden="true"></i></h4>
               <input type="file" name="video"  id="btn_archivo">
             
           </div>
@@ -21,7 +21,7 @@
 <hr>
 
 
-        <div class="form-row col-8 mx-auto">
+        <div class="form-row col-12 mx-auto">
           <div class="col-6 mx-auto">
                         <div class="form-group">
                           <label>Nombre/s</label>
@@ -81,14 +81,54 @@
 
 
 
-   <div class="form-row">
+   <div class="form-row ">
        <div class="form-group col-md-12 mx-auto">
           <label>Datos Laborales</label>
 <textarea id="infoartist"  ng-show="dForm"  name="descripcion" rows="5" class="form-control text-left" placeholder="Datos Laborales" Creando tu Perfil de trabajador></textarea>
 </div>
 </div>
 
-    <input type="submit" class="btn btn-lg btn-outline-primary" value="Confirmar perfil">
+<h3 class="text-center mt-3">Redes Sociales (Opcional)</h3>
+
+                 <div class="form-row col-12 mx-auto  mb-5">
+                    <div class="col-12 mx-auto">
+     <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" ><i class="fa fa-facebook" aria-hidden="true"></i></i> &nbsp;URL De Facebook</span>
+  </div>
+  <input type="text" name="facebook" class="form-control" placeholder="URL de Perfil de Facebook(WEB)">
+</div>
+
+          </div>
+                  
+        </div>
+                <div class="form-row col-12 mx-auto  mb-5">
+                    <div class="col-12 mx-auto">
+     <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3"><i class="fa fa-instagram" aria-hidden="true"></i> &nbsp; instagram.com/</span>
+  </div>
+  <input type="text" name="instagram" class="form-control" placeholder="Usuario de Instagram">
+</div>
+
+          </div>
+                  
+        </div>
+                <div class="form-row col-12 mx-auto  mb-5">
+                    <div class="col-12 mx-auto">
+     <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text"><i class="fa fa-twitter" aria-hidden="true"></i> &nbsp; https://twitter.com/</span>
+  </div>
+  <input type="text" name="twitter" class="form-control" placeholder="usuario de Twitter">
+</div>
+
+          </div>
+                  
+        </div>
+
+
+    <button type="submit"  class="btn btn-lg btn-outline-primary">Confirmar perfil <i class="fa fa-check" aria-hidden="true"></i></button>
     </form>
   </div>
 </div>
