@@ -124,75 +124,10 @@
 
                                </div>
 
-<hr>
-                           
-                              <div class="mx-auto"> <h3>Referencias</h3></div> 
-                       <div class="text-left ml-5"> <pre class="my-pre">{{profile.descripcion}}</pre></div>
 
 
 
 
-<hr>
-<h3 class="mb-3">Opciones Premiun</h3>
-{{#if puntuacion}}
-
-        <div class="form-row col-12 mx-auto">
-          <div class="col-6 mx-auto">
-                        <div class="form-group">
-                      <form action="/company/mercadopago" method="post" target="_blank">
-  <input type="hidden" name="id" value="{{profile.id}}">
- 
-  <button type="submit" class="btn btn-primary col-12">Ver Historial y reseñas <i class="fa fa-history" aria-hidden="true"></i></button>
-</form>
-            </div>
-
-          </div>
-          
-          <div class="col-6 mx-auto">
-                        <div class="form-group">
-                         <form action="/company/pdf" method="post">
-                          <input type="hidden" name="perfil" value="{{profile.id}}" >
-                          <button type="submit"  class="btn btn-primary col-12" >Generar PDF <i class="fa fa-file-text" aria-hidden="true"></i></button>
-                          </form>
-
-            </div>
-          </div>
-        </div>
-
-
-{{/if}}
-
-<hr>
-
-<h4 class="mx-auto text-center"> {{profile.nombre}} busca trabajo como</h4>
-<div class="card-group">
-
-    
- {{#each oferta as |oferta|}}
- <div class="col-12 mb-3">
-  <div class="card border-success">
-<div class="card-header"><h5 class="card-title">{{oferta.trabajo}}</h5></div>
-    <div class="card-body">
-      
-      <p class="card-text">{{oferta.descripcion}}</p>
-
-
- <form action="/employee/new-notification/{{oferta.id_empleado}}" method="post"
-                                        onsubmit="return confirm('Desea Enviar una Solicitud de trabajo?');">
-                                              <input type="hidden" name="trabajo" value="{{oferta.trabajo}}">
-                                        <button type="submit" class="btn btn-primary ">Enviar Propuesta de Trabajo</button>
-                                    </form>
-    </div>
-  </div>
-
-
-
-</div>
-{{/each}}
-
-
-
-</div>
 
 
 

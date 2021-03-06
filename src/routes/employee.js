@@ -42,9 +42,13 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
     if(verify1===undefined || verify1==="" || verify1===null || verify1.length < 1 && verify2===undefined || verify2==="" || verify2===null || verify2.length < 1){
     
     
-         const { nombre,apellido,sexo,estado_civil,descripcion,telefono} = req.body;   
-    var {fecha,facebook,instagram,twitter} = req.body 
-    if(nombre===""  || nombre===null  || nombre===undefined  || apellido===""  ||  apellido===null   ||  apellido===undefined  ||sexo==="" ||sexo===null ||sexo===undefined || estado_civil==="" || estado_civil===null || estado_civil===undefined || fecha==="" || fecha===null || fecha===undefined || descripcion==="" || descripcion===null || descripcion===undefined || telefono==="" || telefono===null || telefono===undefined){
+         const { nombre,apellido,sexo,estado_civil,descripcion,telefono,hijos} = req.body;   
+    var {fecha,facebook,instagram,twitter} = req.body;
+    if(typeof estado_civil==='object'){
+        req.flash('message','Ha ocurrido un error inesperado, por favor vuelva a intentarlo nuevamente.')
+        res.redirect('/profile')
+      }
+    if(nombre===""  || nombre===null  || nombre===undefined  || apellido===""  ||  apellido===null   ||  apellido===undefined  ||sexo==="" ||sexo===null ||sexo===undefined || estado_civil==="" || estado_civil===null || estado_civil===undefined || fecha==="" || fecha===null || fecha===undefined || telefono==="" || telefono===null || telefono===undefined ||hijos===0||hijos===null||undefined){
      
         req.flash('message', 'Por favor Completa todos los campos');
         res.redirect('/profile')
@@ -63,7 +67,7 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
         req.flash('message', req.fileValidationError)
         res.redirect('/profile')
         }else{
-            console.log(req.file)
+            
     if(req.file!==undefined){
     await getVideoDurationInSeconds(req.file.path).then(async(duration) => {
     var a = Math.round(duration);
@@ -81,6 +85,7 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
            telefono,
             sexo,
             estado_civil,
+            hijos,
             video,
             facebook,
             instagram,
@@ -88,7 +93,7 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
         };
         await pool.query('INSERT INTO usuarios_empleado SET ?', [trabajador]);
         await pool.query('UPDATE usuarios set perfil=1 WHERE id = ?', [req.user.id]);
-        req.flash('success', 'Perfil Creado satisfactoriamente');
+          req.flash('success', 'Perfil Creado satisfactoriamente');
         res.redirect('/profile')
     }else{
         await fs.unlink(req.file.path)
@@ -112,6 +117,7 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
            telefono,
             sexo,
             estado_civil,
+            hijos,
             facebook,
             instagram,
             twitter
@@ -121,6 +127,8 @@ router.post('/new',isLoggedIn,isEmployee, async(req,res)=>{
         await pool.query('UPDATE usuarios set perfil=1 WHERE id = ?', [req.user.id]);
         req.flash('success', 'Perfil Creado satisfactoriamente');
         res.redirect('/profile')
+
+     console.log(trabajador)
     }
     }//fin de si no hay req.fileValidationError
 

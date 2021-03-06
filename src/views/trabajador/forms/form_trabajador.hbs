@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="/css/boton_de_archivo.css">
 
+
+
+
 <div class="mt-3">
 
 <div class="row justify-content-center mx-auto col-md-8 align-items-center ">
@@ -45,19 +48,54 @@
     <select name="sexo" class="form-control" id="sexo" >
     <option value="Hombre">Hombre</option>
     <option value="Mujer">Mujer</option>
+    <option value="Otro">Otro</option>
     </select>
 </div>
 
     <div class="form-group col-md-8 mx-auto">
        <label>Estado Civil</label>
-    <select name="estado_civil" class="form-control">
+    <select name="estado_civil" class="form-control" id="att1">
     <option id="sol" value="Casado">Soltero/a</option>
     <option id="cas" value="Soltero">Casado/a</option>
     </select>
+    <input type="text" name="estado_civil" class="form-control" placeholder="Desscriba su estado civil" id="att2" disabled="true" style="display: none;" >
 </div>
 
   </div>
  
+
+
+<label class="mx-auto text-center">Tiene hijos?</label>
+        <div class="form-row col-10 mx-auto">
+          
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+                          
+                 <div class="custom-control custom-radio">
+      <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input" onchange="Hijos()">
+      <label class="custom-control-label" for="customRadio1" >No</label>
+    </div>
+            </div>
+
+          </div>
+          
+          <div class="col-6 mx-auto">
+                        <div class="form-group">
+                         
+                <div class="custom-control custom-radio">
+      <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input"  onchange="Hijos()">
+      <label class="custom-control-label" for="customRadio2" >Si</label>
+      
+   
+            <input type="number" class="form-control"  name="hijos" placeholder="Numero de Hijos" id="hijos"  style="display: none;">
+             </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
 
 
 
@@ -151,20 +189,57 @@
 
 document.getElementById("sexo").onchange = function() {cambiaValores()};
 
+
 function cambiaValores() {
+
     var input = document.getElementById("sexo");
     var sol= document.getElementById("sol")
     var cas = document.getElementById("cas")
-   if(input.value == "Hombre"){
+    var tipo1 = document.getElementById("att1")
+    var tipo2 = document.getElementById("att2")
+    var hijos = document.getElementById("hijos");
+   if(input.value==="Hombre"){
+    tipo1.removeAttribute('disabled')
+    tipo1.style.display = "block";
+    tipo2.style.display = "none";
+    tipo2.setAttribute('disabled', "true");
+    tipo2.removeAttribute('required');
     sol.value= "Soltero"
     cas.value="Casado"
-   }else{
+   }else if(input.value==="Mujer"){
+    tipo1.removeAttribute('disabled')
+    tipo1.style.display = "block";
+    tipo2.style.display = "none";
+    tipo2.setAttribute('disabled', "true");
+    tipo2.removeAttribute('required');
      sol.value="Soltera"
      cas.value="Casada"
+   }else{
+     tipo1.style.display = "none";
+      tipo1.setAttribute('disabled', "true");
+      tipo2.removeAttribute('disabled');
+      tipo2.style.display = "block";
+      tipo2.setAttribute('required', "true");
    }
 }
 
-
+function Hijos(){
+          var check1 = document.getElementById("customRadio1");
+          var check2 = document.getElementById("customRadio2");
+          var hijos = document.getElementById("hijos")
+        if (check1.checked) {
+           hijos.value = 0
+          hijos.style.display="none";
+          
+        }
+        if(check2.checked) {
+        hijos.value="";
+        
+        hijos.style.display = "block";
+        hijos.setAttribute('required', "true");
+        }
+   
+}
 
 var text = document.getElementById("infoartist").value;
 text = text.replace(/\r?\n/g, '<br />');

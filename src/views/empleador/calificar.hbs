@@ -9,10 +9,10 @@ select {     text-align: center;
     -moz-text-align-last: center;}
 </style>
 
-<h4 class="col-md-6 mx-auto text-center text-primary mt-5">Calificar en base a que 1 Estrella es Muy malo y 5 estrellas Excelente</h4>
+<h4 class="col-md-6 mx-auto text-center text-primary mt-5">Calificar en base a la experiencia que tuvo este empleado en su labor de trabajo</h4>
 
 
-<div class="col-md-6 mx-auto text-center mt-5">
+<div class="col-md-10 mx-auto text-center mt-5">
     <div class="card">
         <div class="card-header">
             <h3>Calificar</h3>
@@ -20,37 +20,151 @@ select {     text-align: center;
         <div class="card-body">
             <form action="/company/dismiss/{{id}}/{{id_empleado}}/{{trabajo}}" method="POST">
               
-
-
-        <div class="form-row col-12">
-          <div class="col-12 mb-3">Calificar con estrellas</div>
-          <div class="col-12  mb-5">
-              <select  class="form-control ddList" name="puntuacion">
-    <option value="1">★ (1 Estrella)</option>
-    <option value="2">★★ (2 Estrellas)</option>
-    <option value="3">★★★ (3 Estrellas)</option>
-    <option value="4">★★★★ (4 Estrellas)</option>
-    <option value="5">★★★★★ (5 Estrellas)</option>
-    
-    
-  </select>
-            </div>
-          </div>
-       
-
-
-                <div class="form-group">
-                <label for="productos">Reseña</label>
-                <textarea name="review" class="form-control" placeholder="Reseña" rows="5"></textarea>
+                <div class="form-row col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado tuvo Puntualidad?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r1" id="r1" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
                 </div>
 
-              
+                <div class="form-row col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado tuvo Presentismo?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r2" id="r2" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">si</option>
+                <option value="no">no</option>
+                </select>
+                </div>
+                </div>
+
+                <div class="form-row col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado tuvo buena presencia?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r3" id="r3" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
+
+                <div class="form-row col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado tuvo buena Diccion?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r4" id="r4" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
+
+                <div class="form-row  col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado tuvo buena relacion con sus Pares?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r5" id="r5" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
+
+
+                <div class="form-row  col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado tuvo buena relacion con sus superiores?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r6" id="r6" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
+
+                <div class="form-row  col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado era responsable?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r7" id="r7" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
+
+                <div class="form-row  col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado cumplia con las tareas asignadas?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r8" id="r8" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
+
+                <div class="form-row  col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado evitaba confilctos?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r9" id="r9" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
+
+                <div class="form-row  col-10 mx-auto">
+                <div class="col-12 mx-auto mb-3">Este empleado generaba conflictos?</div>
+                <div class="col-8  mx-auto mb-5">
+                <select  class="form-control" name="r10" id="r10" onchange="mensajeChange()">
+                <option value="">Eligue una opcion</option>
+                <option value="si">Si</option>
+                <option value="no">No</option>
+                </select>
+                </div>
+                </div>
 
 
                 <div class="form-group">
-                    <button class="btn btn-primary btn-block" type="submit">Calificar</button>
+                    <button class="btn btn-primary btn-block" id="enviar" type="submit" disabled>Calificar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+
+    <script>
+    
+        function mensajeChange() {
+         
+          const r1 = document.getElementById("r1");
+          const r2 = document.getElementById("r2");
+          const r3 = document.getElementById("r3");
+          const r4 = document.getElementById("r4");
+          const r5 = document.getElementById("r5");
+          const r6 = document.getElementById("r6");
+          const r7 = document.getElementById("r7");
+          const r8 = document.getElementById("r8");
+          const r9 = document.getElementById("r9");
+          const r10 = document.getElementById("r10");
+
+          const boton = document.getElementById("enviar");
+          
+          
+          if (r1.value.trim() !== "" && r2.value.trim() !== "" && r3.value.trim() !== "" && r4.value.trim() !== "" && r5.value.trim() !== "" && r6.value.trim() !== "" && r7.value.trim() !== "" && r8.value.trim() !== "" && r9.value.trim() !== "" && r10.value.trim() !== "") {
+            console.log("Se muestra")
+            boton.removeAttribute('disabled')
+          } else {
+            boton.setAttribute('disabled', "true");
+          }
+        }
+        
+      </script>
