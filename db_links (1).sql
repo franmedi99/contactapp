@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-01-2021 a las 14:17:46
+-- Tiempo de generación: 07-03-2021 a las 00:38:24
 -- Versión del servidor: 10.4.17-MariaDB
 -- Versión de PHP: 8.0.0
 
@@ -129,8 +129,17 @@ CREATE TABLE `puntuacion` (
   `id_empleado` int(11) NOT NULL,
   `puntuacion` int(11) NOT NULL,
   `trabajo` varchar(50) COLLATE utf8mb4_spanish_ci NOT NULL,
-  `review` varchar(500) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL
+  `ventajas` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `desventajas` varchar(500) COLLATE utf8mb4_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `puntuacion`
+--
+
+INSERT INTO `puntuacion` (`id_puntuacion`, `id_firma`, `id_empleado`, `puntuacion`, `trabajo`, `ventajas`, `desventajas`) VALUES
+(12, 2, 1, 7, 'cocinero', '[\"Buena Presencia\",\"Buena Diccion\",\"Buena Relacion con sus Pares\",\"Buena Relacion con sus Superiores\",\"Responsable\",\"Cumple con las tareas asignadas\",\"Evita Conflictos\"]', '[\"Impuntual\",\"Ausentismo\",\"Genera Conflictos\"]'),
+(13, 2, 1, 6, 'cocinero', '[\"Puntual\",\"Buena Presencia\",\"Buena Diccion\",\"Buena Relacion con sus Pares\",\"Buena Relacion con sus Superiores\",\"Evita Conflictos\"]', '[\"Ausentismo\",\"Irresponsible\",\"No cumple con las tareas asignadas\",\"Genera Conflictos\"]');
 
 -- --------------------------------------------------------
 
@@ -149,7 +158,51 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('5CPgN8sxSWVewJv691C8gY9vHiHZXOwZ', 1612066880, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{},\"passport\":{\"user\":2}}');
+('1tGWTgRWLJe6VSWmP6FX1FKeuiq-9rlw', 1613533269, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('3-C8MzTKJJmNm2L0JY1cQfXdLanY5VHi', 1613531569, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{},\"passport\":{\"user\":2}}'),
+('39qMoIwBnita6me9Y9N4ChxNmKEhjeER', 1613533418, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('3PDmhJmd4NAPLVUnIZOzMUk59ecNXlNE', 1613530858, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('3gSq8zrUpaA4tuRTcC41DM5NaJGvWjOv', 1613535074, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('6bXeLyhKc4yNk_OSKGmREAeK22JoAgV6', 1613530784, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('7P_ZRfN5NXKlqPSe_DAIG-Iw1hVMGtnC', 1613533230, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('82i_cnpF4NldGTzG_sQyqfylWyrtOHyp', 1613523741, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{},\"passport\":{\"user\":2}}'),
+('85pH9HSgunJCQ5nvKqGuBawmCVwaOx5A', 1613531374, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('9LUKUc3ZWK6dO75LeT3v3ZFHqu6YV47I', 1613535448, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('AdUmyZ7m1cT7B893EMmijJDD3zOoTNVq', 1613532889, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('B35hbltGdDKT0iP5HmiCKSKBORDr0S_5', 1613535566, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('BzTN5FgISre3rjYrA8Q6vmuV0P3M_uh1', 1613535409, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('DSOQheCGOgGkXzXuok8gccs1SgJM4PYm', 1613531403, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('DsqijvrXQAJmb9O0uMp7X9XKXE_WJW22', 1613535387, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('ImJiMLIZVYtLlSjEtgwlcibkcv9UQrKR', 1613532688, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('Js9odfWONePaJo9J0yF5FQu5ESfReMQC', 1613530715, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('K6rEymYPpXj0ZczbcYe9HiyndFjy4E82', 1613530688, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('Ka2vIusv8Iy6GOdQX_Nu2SsUXrfpsuZc', 1613531292, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('MINdcHNWOGVIwRfgW__fknuUnDo09zFD', 1613533299, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('N-Tjsk5e1b1uHR8aqIsaMVMTCn0T8kB2', 1613535649, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{},\"passport\":{\"user\":2}}'),
+('O1Mgn9N0AXbhDgYrcIjwIs717CovpOcg', 1613535626, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('Q_7lOmJnGzuUJFqkty0f_m2yWc9dUzhE', 1613534865, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('RovTaaecNSFGNVbyIVhphuqlbTIfX0DB', 1613535499, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('T6MlpS1ca_H6p7_CuIo391BVBz612rs-', 1613530669, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('VjH1kH2au7OUP7JSjvWqD1n_q6LTfMAD', 1613530878, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('Yv45_DLBnfndvonLkCwYIVMa4Wz_XwYr', 1613532747, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('Z-uI884D5I_qsBmgaNyB_lvy9kPVLVqW', 1613535275, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('_vIp0vd30DezTo8U8w1ZsT06A3iAoPt1', 1613531269, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('biaAUMpBspNQlX0S2KsfTBpa0Y8uITY2', 1613534985, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('hNnEYf7tc9vXV1v3ZeGh7PAJR6U7Thy6', 1613530707, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('k8DxhU5Z1FLwl5jgmtzldRLQZsQvZQcZ', 1613533091, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('lHtRTYBQ8phuJ667G1T0sLS320YQLhp9', 1613533826, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('mGiDim39WZzgNHqWfBCL4cYbdfJTL8cR', 1613531228, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('mezU6cR6LQS8I4Kjw9rZneBU74KgfxoA', 1613530637, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('nORHnyiQvHllcdMJ6JMF3dbZQiMt95ez', 1613533525, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('pStyZ25dE28iqaQlsZ4KuLsAdk5Y5q5f', 1613532769, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('pcSfgKxq-FlyxDY6AlCM6LO25drhKsAm', 1613535553, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('qyTyQakTfXywxUwzVpeKkT8w9flwUhHd', 1613533597, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('rxVO66Y1XjbFV0aRJ4xMGS6wI40PNVZ_', 1613531258, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('rzfFuyNwefOQd3fT0AYrhRyiY8nHHQqu', 1613533570, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('sShf0_OJtUAT6BombzOltOeJxsShP8ug', 1613533848, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('tB_e6B1hWmzJ7gfeUCG0Hm3KXbbNqX2z', 1613535612, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('v3VxHGIG6SUA5zurk0azKatv1rZGSr4J', 1613535508, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}'),
+('yU6eP5ZqXqyHRrdMF6SxrxirggnO16pP', 1613533210, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"flash\":{}}');
 
 -- --------------------------------------------------------
 
@@ -211,6 +264,7 @@ CREATE TABLE `usuarios_empleado` (
   `telefono` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
   `sexo` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
   `estado_civil` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `hijos` varchar(11) COLLATE utf8_spanish_ci NOT NULL,
   `video` varchar(500) COLLATE utf8_spanish_ci NOT NULL,
   `facebook` varchar(500) COLLATE utf8_spanish_ci NOT NULL,
   `instagram` varchar(500) COLLATE utf8_spanish_ci NOT NULL,
@@ -222,9 +276,9 @@ CREATE TABLE `usuarios_empleado` (
 -- Volcado de datos para la tabla `usuarios_empleado`
 --
 
-INSERT INTO `usuarios_empleado` (`id_empleado`, `nombre`, `apellido`, `descripcion`, `fecha`, `telefono`, `sexo`, `estado_civil`, `video`, `facebook`, `instagram`, `twitter`, `puntuacion`) VALUES
-(1, 'francisco', 'medina deering', ' sa', '1999-07-08', '(+54) 223 687 0198', 'Hombre', 'Casado', '', 'https://www.facebook.com/profile.php?id=100008188352302', 'instagram.com/fmedina', 'twitter.com/fmedina', ''),
-(3, 'usuario', 'apellidodelusuario', 'descripcion', '1999-07-08', '223', 'hombre', 'casado', '', '', '', '', '');
+INSERT INTO `usuarios_empleado` (`id_empleado`, `nombre`, `apellido`, `descripcion`, `fecha`, `telefono`, `sexo`, `estado_civil`, `hijos`, `video`, `facebook`, `instagram`, `twitter`, `puntuacion`) VALUES
+(1, 'francisco', 'medina deering', ' sa', '1999-07-08', '(+54) 223 687 0198', 'Hombre', 'Casado', '0', '', 'https://www.facebook.com/profile.php?id=100008188352302', 'instagram.com/fmedina', 'twitter.com/fmedina', '6.5'),
+(3, 'usuario', 'apellidodelusuario', 'descripcion', '1999-07-08', '223', 'hombre', 'casado', '0', '', '', '', '', '10');
 
 -- --------------------------------------------------------
 
@@ -346,13 +400,13 @@ ALTER TABLE `usuarios_firma`
 -- AUTO_INCREMENT de la tabla `confirmaciones`
 --
 ALTER TABLE `confirmaciones`
-  MODIFY `id_notificacion` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_notificacion` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados_activos`
 --
 ALTER TABLE `empleados_activos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `notificaciones_empleados`
@@ -382,7 +436,7 @@ ALTER TABLE `publicaciones_firmas`
 -- AUTO_INCREMENT de la tabla `puntuacion`
 --
 ALTER TABLE `puntuacion`
-  MODIFY `id_puntuacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_puntuacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_de_perfil`
